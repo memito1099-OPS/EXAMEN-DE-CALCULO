@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen — Cálculo Integral</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyBmRSarMxqcAUDdCyc-7bBupZpSfZRHEgA",
+    authDomain: "examen-de-calculo.firebaseapp.com",
+    projectId: "examen-de-calculo",
+    storageBucket: "examen-de-calculo.firebasestorage.app",
+    messagingSenderId: "596084718972",
+    appId: "1:596084718972:web:778f22d2f49aab38d7f8f9",
+    measurementId: "G-6DYGZKZMRJ"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window.__db = db;
+  window.__addDoc = addDoc;
+  window.__collection = collection;
+  window.__fbReady = true;
+</script>
+<style>
+:root{--ink:#1a1208;--ink2:#3d2f1a;--parch:#faf6ee;--parch2:#f2ead8;--gold:#b8860b;--gold2:#d4a01a;--red:#8b1a1a;--green:#1a5c2e;--border:#c8b98a;--shadow:rgba(90,60,10,0.13);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#ede6d3;background-image:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(180,160,100,.06) 28px,rgba(180,160,100,.06) 29px);min-height:100vh;font-family:'Source Serif 4',Georgia,serif;color:var(--ink);display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 4rem;}
+header{text-align:center;max-width:760px;width:100%;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:2px solid var(--gold);position:relative;}
+header::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);width:60%;height:1px;background:var(--gold2);}
+.uni-label{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;}
+h1{font-family:'Playfair Display',Georgia,serif;font-size:2.1rem;font-weight:700;color:var(--ink);line-height:1.2;margin-bottom:.35rem;}
+.subtitle{font-size:.88rem;color:var(--ink2);font-style:italic;margin-bottom:1rem;}
+.meta-row{display:flex;justify-content:center;gap:2rem;font-size:.8rem;color:var(--ink2);margin-top:.75rem;}
+#timer-box{background:var(--ink);color:#fdf6e3;font-family:'Playfair Display',serif;font-size:1.5rem;padding:.3rem 1.2rem;border-radius:4px;letter-spacing:.05em;min-width:90px;text-align:center;transition:background .5s;}
+#timer-box.danger{background:var(--red);}
+main{max-width:760px;width:100%;}
+.section-head{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:.4rem;margin:2rem 0 1.2rem;text-transform:uppercase;letter-spacing:.12em;font-weight:600;}
+.student-card{background:var(--parch);border:1.5px solid var(--gold);border-radius:6px;padding:1.5rem 1.8rem;margin-bottom:1.8rem;box-shadow:0 2px 8px var(--shadow);}
+.student-card h2{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold);margin-bottom:1rem;letter-spacing:.08em;text-transform:uppercase;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:560px){.field-row{grid-template-columns:1fr;}}
+.field-group{display:flex;flex-direction:column;gap:.35rem;}
+.field-group label{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);}
+.field-group input{font-family:'Source Serif 4',Georgia,serif;font-size:.92rem;padding:.5rem .75rem;border:1px solid var(--border);border-radius:4px;background:var(--parch2);color:var(--ink);outline:none;transition:border-color .15s;}
+.field-group input:focus{border-color:var(--gold);}
+.field-group input.field-error{border-color:var(--red);background:#fdf0f0;}
+.question-card{background:var(--parch);border:1px solid var(--border);border-radius:6px;padding:1.5rem 1.8rem;margin-bottom:1.4rem;box-shadow:0 2px 8px var(--shadow);}
+.q-header{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1rem;}
+.q-num{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--gold);min-width:2.2rem;line-height:1;}
+.q-text{font-size:.97rem;line-height:1.7;color:var(--ink);}
+.q-math{background:var(--parch2);border-left:3px solid var(--gold);padding:.7rem 1.1rem;margin:.8rem 0;border-radius:0 4px 4px 0;font-size:1rem;overflow-x:auto;}
+.options{display:flex;flex-direction:column;gap:.55rem;margin-top:1rem;}
+.option-label{display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;border:1px solid var(--border);border-radius:4px;cursor:pointer;background:var(--parch2);font-size:.88rem;transition:background .15s,border-color .15s;user-select:none;}
+.option-label:hover{background:#ede5cc;border-color:var(--gold);}
+.option-label input[type="radio"]{display:none;}
+.opt-bullet{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-family:'Playfair Display',serif;font-weight:700;color:var(--ink2);background:var(--parch);transition:all .15s;}
+.option-label.selected .opt-bullet{background:var(--gold);border-color:var(--gold);color:#fff;}
+.option-label.correct{background:#d4f0da!important;border-color:var(--green)!important;}
+.option-label.correct .opt-bullet{background:var(--green);border-color:var(--green);color:#fff;}
+.option-label.wrong{background:#f4d4d4!important;border-color:var(--red)!important;}
+.option-label.wrong .opt-bullet{background:var(--red);border-color:var(--red);color:#fff;}
+.option-label.disabled{cursor:not-allowed;pointer-events:none;}
+#btn-submit{display:block;width:100%;max-width:340px;margin:2.5rem auto 0;padding:.9rem 2rem;background:var(--ink);color:#fdf6e3;font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;letter-spacing:.06em;border:none;border-radius:4px;cursor:pointer;transition:background .2s,transform .1s;}
+#btn-submit:hover{background:var(--gold);}
+#btn-submit:active{transform:scale(.98);}
+#btn-submit:disabled{background:#aaa;cursor:not-allowed;}
+#result-panel{display:none;background:var(--parch);border:2px solid var(--gold);border-radius:8px;padding:2.5rem 2rem;text-align:center;margin-top:2rem;box-shadow:0 6px 24px var(--shadow);}
+.result-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--ink);margin-bottom:.5rem;}
+.result-student{font-size:.88rem;color:var(--ink2);margin-bottom:.2rem;font-style:italic;}
+.score-circle{width:120px;height:120px;border-radius:50%;margin:1.2rem auto;display:flex;flex-direction:column;align-items:center;justify-content:center;border:4px solid var(--gold);background:var(--parch2);}
+.score-num{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;color:var(--ink);line-height:1;}
+.score-denom{font-size:.85rem;color:var(--ink2);}
+.score-grade{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--gold);margin-top:.5rem;font-style:italic;}
+.score-msg{font-size:.9rem;color:var(--ink2);margin-top:.8rem;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.6;}
+#countdown-close{font-size:.82rem;color:var(--red);margin-top:1.5rem;font-style:italic;}
+.progress-bar-wrap{width:100%;max-width:760px;height:4px;background:var(--border);border-radius:2px;margin-bottom:2rem;overflow:hidden;}
+#progress-bar{height:100%;background:var(--gold);width:0%;transition:width .4s;}
+#save-status{font-size:.8rem;margin-top:1rem;font-style:italic;color:var(--ink2);}
+</style>
+</head>
+<body>
+<header>
+  <div class="uni-label">Departamento de Matemáticas</div>
+  <h1>Examen de Cálculo Integral</h1>
+  <div class="subtitle">Fracciones Parciales &amp; Áreas mediante Integrales Definidas</div>
+  <div class="meta-row">
+    <span>📋 10 reactivos &nbsp;|&nbsp; Valor: 10 puntos c/u</span>
+    <span>⏱ <span id="timer-box">50:00</span></span>
+  </div>
+</header>
+<div class="progress-bar-wrap"><div id="progress-bar"></div></div>
+<main>
+  <div class="student-card">
+    <h2>Datos del alumno</h2>
+    <div class="field-row">
+      <div class="field-group">
+        <label for="stu-name">Nombre completo</label>
+        <input type="text" id="stu-name" placeholder="Ej. María García López" autocomplete="name">
+      </div>
+      <div class="field-group">
+        <label for="stu-email">Correo electrónico</label>
+        <input type="email" id="stu-email" placeholder="correo@ejemplo.com" autocomplete="email">
+      </div>
+    </div>
+  </div>
+
+  <div class="section-head">Sección I — Fracciones Parciales</div>
+
+  <div class="question-card">
+    <div class="q-header"><div class="q-num">1</div><div class="q-text">Evalúa la siguiente integral utilizando el método de fracciones parciales:<div class="q-math">\[\int \frac{3x+5}{x^2+3x+2}\,dx\]</div></div></div>
+    <div class="options" id="opts-1">
+      <label class="option-label"><input type="radio" name="q1" value="0"><span class="opt-bullet">A</span>\(\ln|x+1| + 2\ln|x+2| + C\)</label>
+      <label class="option-label"><input type="radio" name="q1" value="1"><span class="opt-bullet">B</span>\(2\ln|x+1| + \ln|x+2| + C\)</label>
+      <label class="option-label"><input type="radio" name="q1" value="2"><span class="opt-bullet">C</span>\(\ln|x+1| - 2\ln|x+2| + C\)</label>
+      <label class="option-label"><input type="radio" name="q1" value="3"><span class="opt-bullet">D</span>\(2\ln|x+1| - \ln|x+2| + C\)</label>
+      <label class="option-label"><input type="radio" name="q1" value="4"><span class="opt-bullet">E</span>\(3\ln|x^2+3x+2| + C\)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="q-header"><div class="q-num">2</div><div class="q-text">Calcula la integral por fracciones parciales:<div class="q-math">\[\int \frac{1}{x^2-1}\,dx\]</div></div></div>
+    <div class="options" id="opts-2">
+      <label class="option-label"><input type="radio" name="q2" value="0"><span class="opt-bullet">A</span>\(\dfrac{1}{2}\ln\left|\dfrac{x-1}{x+1}\right| + C\)</label>
+      <label class="option-label"><input type="radio" name="q2" value="1"><span class="opt-bullet">B</span>\(\dfrac{1}{2}\ln\left|\dfrac{x+1}{x-1}\right| + C\)</label>
+      <label class="option-label"><input type="radio" name="q2" value="2"><span class="opt-bullet">C</span>\(\ln|x^2-1| + C\)</label>
+      <label class="option-label"><input type="radio" name="q2" value="3"><span class="opt-bullet">D</span>\(-\dfrac{1}{2}\ln|x^2-1| + C\)</label>
+      <label class="option-label"><input type="radio" name="q2" value="4"><span class="opt-bullet">E</span>\(\ln|x-1| - \ln|x+1| + C\)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="q-header"><div class="q-num">3</div><div class="q-text">Determina la descomposición en fracciones parciales de:<div class="q-math">\[\frac{2x^2+3x-1}{x(x+1)(x-1)}\]</div></div></div>
+    <div class="options" id="opts-3">
+      <label class="option-label"><input type="radio" name="q3" value="0"><span class="opt-bullet">A</span>\(\dfrac{1}{x} + \dfrac{2}{x+1} + \dfrac{3}{x-1}\)</label>
+      <label class="option-label"><input type="radio" name="q3" value="1"><span class="opt-bullet">B</span>\(\dfrac{1}{x} + \dfrac{1}{x+1} + \dfrac{2}{x-1}\)</label>
+      <label class="option-label"><input type="radio" name="q3" value="2"><span class="opt-bullet">C</span>\(\dfrac{2}{x} + \dfrac{1}{x+1} + \dfrac{3}{x-1}\)</label>
+      <label class="option-label"><input type="radio" name="q3" value="3"><span class="opt-bullet">D</span>\(\dfrac{1}{x} - \dfrac{2}{x+1} + \dfrac{3}{x-1}\)</label>
+      <label class="option-label"><input type="radio" name="q3" value="4"><span class="opt-bullet">E</span>\(\dfrac{3}{x} + \dfrac{1}{x+1} - \dfrac{2}{x-1}\)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="q-header"><div class="q-num">4</div><div class="q-text">Evalúa la integral:<div class="q-math">\[\int \frac{x}{(x+1)(x+2)}\,dx\]</div></div></div>
+    <div class="options" id="opts-4">
+      <label class="option-label"><input type="radio" name="q4" value="0"><span class="opt-bullet">A</span>\(-\ln|x+1| + 2\ln|x+2| + C\)</label>
+      <label class="option-label"><input type="radio" name="q4" value="1"><span class="opt-bullet">B</span>\(\ln|x+1| - 2\ln|x+2| + C\)</label>
+      <label class="option-label"><input type="radio" name="q4" value="2"><span class="opt-bullet">C</span>\(2\ln|x+1| + \ln|x+2| + C\)</label>
+      <label class="option-label"><input type="radio" name="q4" value="3"><span class="opt-bullet">D</span>\(-\ln|x+1| + \ln|x+2| + C\)</label>
+      <label class="option-label"><input type="radio" name="q4" value="4"><span class="opt-bullet">E</span>\(\ln|(x+1)(x+2)| + C\)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="q-header"><div class="q-num">5</div><div class="q-text">Calcula la integral usando fracciones parciales:<div class="q-math">\[\int \frac{4x}{x^2-4}\,dx\]</div></div></div>
+    <div class="options" id="opts-5">
+      <label class="option-label"><input type="radio" name="q5" value="0"><span class="opt-bullet">A</span>\(2\ln|x^2-4| + C\)</label>
+      <label class="option-label"><input type="radio" name="q5" value="1"><span class="opt-bullet">B</span>\(\ln|x-2| + \ln|x+2| + C\)</label>
+      <label class="option-label"><input type="radio" name="q5" value="2"><span class="opt-bullet">C</span>\(4\ln\left|\dfrac{x-2}{x+2}\right| + C\)</label>
+      <label class="option-label"><input type="radio" name="q5" value="3"><span class="opt-bullet">D</span>\(2\ln|(x-2)(x+2)| + C\)</label>
+      <label class="option-label"><input type="radio" name="q5" value="4"><span class="opt-bullet">E</span>\(\ln|x^2-4|^2 + C\)</label>
+    </div>
+  </div>
+
+  <div class="section-head">Sección II — Áreas con Integrales Definidas</div>
+
+  <div class="question-card">
+    <div class="q-header"><div class="q-num">6</div><div class="q-text">Calcula el área bajo la curva \(f(x)=x^2\) en el intervalo \([0,\,3]\):<div class="q-math">\[\int_0^3 x^2\,dx\]</div></div></div>
+    <div class="options" id="opts-6">
+      <label class="option-label"><input type="radio" name="q6" value="0"><span class="opt-bullet">A</span>\(6\)</label>
+      <label class="option-label"><input type="radio" name="q6" value="1"><span class="opt-bullet">B</span>\(9\)</label>
+      <label class="option-label"><input type="radio" name="q6" value="2"><span class="opt-bullet">C</span>\(12\)</label>
+      <label class="option-label"><input type="radio" name="q6" value="3"><span class="opt-bullet">D</span>\(27\)</label>
+      <label class="option-label"><input type="radio" name="q6" value="4"><span class="opt-bullet">E</span>\(18\)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="q-header"><div class="q-num">7</div><div class="q-text">Calcula el área de la región bajo la curva \(f(x) = 3x^2 + 2x\) en el intervalo \([1,\,3]\):<div class="q-math">\[\int_1^3 (3x^2 + 2x)\,dx\]</div></div></div>
+    <div class="options" id="opts-7">
+      <label class="option-label"><input type="radio" name="q7" value="0"><span class="opt-bullet">A</span>\(28\)</label>
+      <label class="option-label"><input type="radio" name="q7" value="1"><span class="opt-bullet">B</span>\(32\)</label>
+      <label class="option-label"><input type="radio" name="q7" value="2"><span class="opt-bullet">C</span>\(34\)</label>
+      <label class="option-label"><input type="radio" name="q7" value="3"><span class="opt-bullet">D</span>\(30\)</label>
+      <label class="option-label"><input type="radio" name="q7" value="4"><span class="opt-bullet">E</span>\(36\)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="q-header"><div class="q-num">8</div><div class="q-text">Calcula el área encerrada entre \(f(x)=\sin x\) y el eje \(x\) en \([0,\,\pi]\):<div class="q-math">\[\int_0^{\pi}\sin x\,dx\]</div></div></div>
+    <div class="options" id="opts-8">
+      <label class="option-label"><input type="radio" name="q8" value="0"><span class="opt-bullet">A</span>\(0\)</label>
+      <label class="option-label"><input type="radio" name="q8" value="1"><span class="opt-bullet">B</span>\(\pi\)</label>
+      <label class="option-label"><input type="radio" name="q8" value="2"><span class="opt-bullet">C</span>\(1\)</label>
+      <label class="option-label"><input type="radio" name="q8" value="3"><span class="opt-bullet">D</span>\(2\)</label>
+      <label class="option-label"><input type="radio" name="q8" value="4"><span class="opt-bullet">E</span>\(\dfrac{\pi}{2}\)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="q-header"><div class="q-num">9</div><div class="q-text">Determina el área bajo la curva \(f(x) = \dfrac{1}{x}\) en el intervalo \([1,\,e^2]\):<div class="q-math">\[\int_1^{e^2} \frac{1}{x}\,dx\]</div></div></div>
+    <div class="options" id="opts-9">
+      <label class="option-label"><input type="radio" name="q9" value="0"><span class="opt-bullet">A</span>\(1\)</label>
+      <label class="option-label"><input type="radio" name="q9" value="1"><span class="opt-bullet">B</span>\(e^2\)</label>
+      <label class="option-label"><input type="radio" name="q9" value="2"><span class="opt-bullet">C</span>\(2\)</label>
+      <label class="option-label"><input type="radio" name="q9" value="3"><span class="opt-bullet">D</span>\(\ln 2\)</label>
+      <label class="option-label"><input type="radio" name="q9" value="4"><span class="opt-bullet">E</span>\(e^2 - 1\)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="q-header"><div class="q-num">10</div><div class="q-text">Calcula el área de la región acotada por \(y=e^x\), el eje \(x\) y las rectas \(x=0\) y \(x=2\):<div class="q-math">\[\int_0^2 e^x\,dx\]</div></div></div>
+    <div class="options" id="opts-10">
+      <label class="option-label"><input type="radio" name="q10" value="0"><span class="opt-bullet">A</span>\(e^2\)</label>
+      <label class="option-label"><input type="radio" name="q10" value="1"><span class="opt-bullet">B</span>\(e^2 - 1\)</label>
+      <label class="option-label"><input type="radio" name="q10" value="2"><span class="opt-bullet">C</span>\(e^2 + 1\)</label>
+      <label class="option-label"><input type="radio" name="q10" value="3"><span class="opt-bullet">D</span>\(2e^2\)</label>
+      <label class="option-label"><input type="radio" name="q10" value="4"><span class="opt-bullet">E</span>\(e^2 - e\)</label>
+    </div>
+  </div>
+
+  <button id="btn-submit" onclick="submitExam()">Entregar Examen</button>
+
+  <div id="result-panel">
+    <div class="result-title">Resultado del Examen</div>
+    <div class="result-student" id="result-student-name"></div>
+    <div class="result-student" id="result-student-email"></div>
+    <div class="score-circle">
+      <div class="score-num" id="score-num">0</div>
+      <div class="score-denom">de 10</div>
+    </div>
+    <div class="score-grade" id="score-grade"></div>
+    <div class="score-msg" id="score-msg"></div>
+    <div id="save-status"></div>
+    <div id="countdown-close"></div>
+  </div>
+</main>
+<script>
+const correctAnswers={q1:1,q2:0,q3:1,q4:0,q5:3,q6:1,q7:2,q8:3,q9:2,q10:1};
+let totalSeconds=50*60,timerInterval,submitted=false;
+function formatTime(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function startTimer(){
+  const tb=document.getElementById('timer-box');
+  tb.textContent=formatTime(totalSeconds);
+  timerInterval=setInterval(()=>{
+    totalSeconds--;tb.textContent=formatTime(totalSeconds);
+    if(totalSeconds<=300)tb.classList.add('danger');
+    if(totalSeconds<=0){clearInterval(timerInterval);if(!submitted)submitExam();}
+  },1000);
+}
+document.querySelectorAll('.option-label').forEach(label=>{
+  label.addEventListener('click',function(){
+    if(submitted)return;
+    const radio=this.querySelector('input[type="radio"]');
+    document.querySelectorAll(`input[name="${radio.name}"]`).forEach(r=>r.closest('.option-label').classList.remove('selected'));
+    this.classList.add('selected');radio.checked=true;updateProgress();
+  });
+});
+function updateProgress(){
+  let a=0;for(let i=1;i<=10;i++)if(document.querySelector(`input[name="q${i}"]:checked`))a++;
+  document.getElementById('progress-bar').style.width=(a*10)+'%';
+}
+async function submitExam(){
+  if(submitted)return;
+  const nameVal=document.getElementById('stu-name').value.trim();
+  const emailVal=document.getElementById('stu-email').value.trim();
+  const emailOk=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+  document.getElementById('stu-name').classList.remove('field-error');
+  document.getElementById('stu-email').classList.remove('field-error');
+  if(!nameVal){document.getElementById('stu-name').classList.add('field-error');alert('Por favor ingresa tu nombre completo.');return;}
+  if(!emailOk){document.getElementById('stu-email').classList.add('field-error');alert('Por favor ingresa un correo electrónico válido.');return;}
+  submitted=true;clearInterval(timerInterval);
+  document.getElementById('btn-submit').disabled=true;
+  document.getElementById('stu-name').disabled=true;
+  document.getElementById('stu-email').disabled=true;
+  let score=0;const respuestas={};
+  for(let i=1;i<=10;i++){
+    const name=`q${i}`;
+    const selected=document.querySelector(`input[name="${name}"]:checked`);
+    const opts=document.querySelectorAll(`#opts-${i} .option-label`);
+    const correct=correctAnswers[name];
+    opts.forEach(l=>l.classList.add('disabled'));
+    if(selected){
+      const val=parseInt(selected.value);respuestas[name]=val;
+      if(val===correct){score++;selected.closest('.option-label').classList.add('correct');}
+      else{selected.closest('.option-label').classList.add('wrong');opts[correct].classList.add('correct');}
+    }else{respuestas[name]=null;opts[correct].classList.add('correct');}
+  }
+  const pct=score/10;
+  let grade=pct===1?'Excelente — 10':pct>=.9?'Muy bien — 9':pct>=.8?'Bien — 8':pct>=.7?'Satisfactorio — 7':pct>=.6?'Suficiente — 6':'No acreditado';
+  let msg=pct>=.7?'Buen desempeño. Revisa los reactivos que fallaste.':'Se recomienda repasar el tema con mayor profundidad.';
+  document.getElementById('score-num').textContent=score;
+  document.getElementById('result-student-name').textContent='👤 '+nameVal;
+  document.getElementById('result-student-email').textContent='✉ '+emailVal;
+  document.getElementById('score-grade').textContent=grade;
+  document.getElementById('score-msg').textContent=msg;
+  const panel=document.getElementById('result-panel');
+  panel.style.display='block';panel.scrollIntoView({behavior:'smooth',block:'center'});
+  const saveEl=document.getElementById('save-status');
+  saveEl.textContent='💾 Guardando resultado...';
+  try{
+    if(window.__fbReady){
+      await window.__addDoc(window.__collection(window.__db,'resultados'),{
+        nombre:nameVal,correo:emailVal,calificacion:score,descripcion:grade,
+        respuestas,fecha:new Date().toISOString(),fechaLegible:new Date().toLocaleString('es-MX')
+      });
+      saveEl.textContent='✅ Resultado guardado correctamente.';
+    }else{saveEl.textContent='⚠️ Firebase no disponible.';}
+  }catch(e){saveEl.textContent='⚠️ Error al guardar: '+e.message;}
+  let cd=30;const cdEl=document.getElementById('countdown-close');
+  cdEl.textContent=`Esta ventana se cerrará en ${cd} segundos...`;
+  const cdI=setInterval(()=>{
+    cd--;cdEl.textContent=`Esta ventana se cerrará en ${cd} segundos...`;
+    if(cd<=0){
+      clearInterval(cdI);
+      document.body.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:'Playfair Display',serif;color:#1a1208;background:#ede6d3;text-align:center;padding:2rem;"><div style="font-size:3.5rem;margin-bottom:1rem;">✓</div><div style="font-size:1.5rem;font-weight:700;margin-bottom:.4rem;">Examen entregado</div><div style="font-size:.95rem;color:#5a4020;font-style:italic;margin-bottom:.2rem;">${nameVal}</div><div style="font-size:.85rem;color:#8a7050;margin-bottom:.8rem;">${emailVal}</div><div style="font-size:1.05rem;color:#b8860b;font-style:italic;">Calificación: ${score}/10 — ${grade}</div><div style="margin-top:1.8rem;font-size:.8rem;color:#8a7050;">Puedes cerrar esta ventana.</div></div>`;
+    }
+  },1000);
+  if(typeof MathJax!=='undefined')MathJax.typesetPromise();
+}
+startTimer();
+</script>
+</body>
+</html>
